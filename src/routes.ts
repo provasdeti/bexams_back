@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import multer from 'multer';
+import { MulterRequest } from './config/multer'; 
 import multerConfig from './config/multer';
+import multer from 'multer';
 import { appDataSource } from './config/database'; // Importe sua fonte de dados
 import Usuario from './app/models/User';
 import Imagem from './app/models/Image';
@@ -8,7 +9,7 @@ import Imagem from './app/models/Image';
 const router = Router();
 
 router.post('/users', async (req, res) => {
-  // Supondo que os dados do usuário são enviados no corpo da requisição
+  // Desctructuring para evitar repetição de req.body...
   const { nome, email } = req.body;
 
   try {
@@ -17,11 +18,11 @@ router.post('/users', async (req, res) => {
     usuario.nome = nome;
     usuario.email = email;
 
-    // Obtenha o repositório de usuário e salve o novo usuário
+    // Salvar o novo usuário no banco de dados
     const usuarioRepository = appDataSource.getRepository(Usuario);
     const novoUsuario = await usuarioRepository.save(usuario);
 
-    // Se tudo ocorrer bem, envie de volta os dados do usuário inserido
+    // Envie de volta os dados do usuário inserido.
     res.json(novoUsuario);
   } catch (error) {
     if (error instanceof Error) {
@@ -35,28 +36,29 @@ router.post('/users', async (req, res) => {
 });
 
 router.post('/images', multer(multerConfig).single('file'), async (req, res) => {
+  const multerReq = req as MulterRequest;
   // Verifique se um arquivo foi enviado com sucesso
-  if (!req.file) {
-    return res.status(400).json({ message: "Nenhum arquivo foi enviado." });
-  }
+  if (multerReq.file) {
+    console.log(multerReq.file);
+  }  else
+  return res.status(400).json({ message: "Nenhum arquivo foi enviado." });
 
-  // Supondo que os dados do usuário são enviados no corpo da requisição
-  const { originalname: name, size, filename: key } = req.file;
+  // Desctructuring para evitar repetição de req.file...
+  const { originalname: name, size, key, location: url } = multerReq.file
 
   try {
     // Crie uma nova instância de usuário
     const imagem = new Imagem();
     imagem.name = name;
     imagem.size = size;
-    imagem.key = key;
-    imagem.url = '';
-    imagem.created_at = new Date();
-
-    // Obtenha o repositório de usuário e salve o novo usuário
+    imagem.key = key!;  
+    imagem.url = url!;
+    
+    // Salvar a nova imagem no banco de dados.
     const imagemRepository = appDataSource.getRepository(Imagem);
     const novaImagem = await imagemRepository.save(imagem);
 
-    // Se tudo ocorrer bem, envie de volta os dados do usuário inserido
+    // Envie de volta os dados da imagem inserida.
     res.json(novaImagem);
   } catch (error) {
     if (error instanceof Error) {
@@ -70,7 +72,6 @@ router.post('/images', multer(multerConfig).single('file'), async (req, res) => 
 });
 
 router.post('/postinho', multer(multerConfig).single('file'), async (req, res) => {
-  console.log(req.file)
   res.json({ 'hello': 'Hello World Jason!' });
 });
 

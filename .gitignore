@@ -1,5 +1,8 @@
-# dependencies
+# Dependencies
 /node_modules
 
-# media
+# Media
 /tmp/uploads
+
+# Secrets and Keys
+.env

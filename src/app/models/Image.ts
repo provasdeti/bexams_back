@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, VersionColumn } from "typeorm";
 
 @Entity('imagens')
 class Imagem {
@@ -20,6 +20,9 @@ class Imagem {
 
     @CreateDateColumn({ type: 'timestamp' })
     created_at!: Date;
+
+    @VersionColumn()
+    version!: number;
 }
 
 export default Imagem;
