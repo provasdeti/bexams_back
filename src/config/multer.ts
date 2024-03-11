@@ -28,6 +28,13 @@ const s3BucketRegion = process.env.S3_BUCKET_REGION;
 const accessKeyId = process.env.S3_ACCESS_KEY;
 const secretAccessKey = process.env.S3_SECRET_KEY;
 
+const s3Client = new S3Client({
+    region: s3BucketRegion,
+    credentials: {
+        accessKeyId: accessKeyId!,
+        secretAccessKey: secretAccessKey!,
+    }
+});
 
 if (!s3BucketName) {
     throw new Error('A variável de ambiente S3_BUCKET_NAME deve ser definida.');
@@ -37,13 +44,6 @@ if (!s3BucketRegion) {
     throw new Error('A variável de ambiente S3_BUCKET_REGION deve ser definida.');
 }
 
-const s3Client = new S3Client({
-    region: s3BucketRegion,
-    credentials: {
-        accessKeyId: accessKeyId!,
-        secretAccessKey: secretAccessKey!,
-    }
-});
 
 const storageTypes = {
     local: multer.diskStorage({

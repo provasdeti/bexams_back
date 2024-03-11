@@ -65,7 +65,7 @@ router.post('/images', multer(multerConfig).single('file'), async (req, res) => 
     const imagem = new Imagem();
     imagem.name = name;
     imagem.size = size;
-    imagem.key = key!;
+    imagem.key = key!.replace(/^img\//, '');;
     imagem.url = url!;
     console.log(imagem);
 
@@ -106,7 +106,7 @@ router.delete('/images/:name/:id', async (req, res) => {
       return res.status(404).json({ message: "Imagem não encontrada." });
     }
     
-    await imagemRepository.delete(imagem.id);
+    await imagemRepository.remove(imagem);
     return res.status(200).json({message: 'Sucesso!'});
   } catch (error) {
     if (error instanceof Error) {
