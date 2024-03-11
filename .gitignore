@@ -6,3 +6,4 @@
 
 # Secrets and Keys
 .env
+/src/config/database.ts

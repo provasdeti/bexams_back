@@ -7,8 +7,12 @@ import morgan from 'morgan';
 import cors from 'cors';
 import routes from './routes';
 import { appDataSource } from './config/database';
+import path from 'path';
 
 const app = express();
+
+// Servir arquivos estáticos
+app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
 
 app.use(cors({
     origin: '*',

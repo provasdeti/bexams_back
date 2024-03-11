@@ -1,4 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, VersionColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, VersionColumn, BeforeInsert } from "typeorm";
+import dotenv from 'dotenv';
+dotenv.config();
+
+const localAppUrl = process.env.APP_URL;
 
 @Entity('imagens')
 class Imagem {
@@ -23,6 +27,14 @@ class Imagem {
 
     @VersionColumn()
     version!: number;
+
+    @BeforeInsert()
+    checkURL() {
+        if (!this.url) {
+            // Atribuir um valor padrão para url
+            this.url = `${localAppUrl}/files/${this.key}`;
+        }
+    }
 }
 
 export default Imagem;

@@ -9,6 +9,7 @@ dotenv.config();
 
 interface MulterFileWithKeyURL extends Express.Multer.File {
     key?: string;
+    name?: string;    
     location?: string;
 }
 
@@ -16,10 +17,17 @@ export interface MulterRequest extends Request {
     file: MulterFileWithKeyURL;
 }
 
+// Defina um tipo para as chaves de storageTypes
+type StorageTypeKey = keyof typeof storageTypes;
+
+// Aqui estamos assumindo que o valor de STORAGE_TYPE do ambiente vai ser 'local' ou 's3'
+const storageType: StorageTypeKey = (process.env.STORAGE_TYPE as StorageTypeKey) || 'local';
+
 const s3BucketName = process.env.S3_BUCKET_NAME;
 const s3BucketRegion = process.env.S3_BUCKET_REGION;
 const accessKeyId = process.env.S3_ACCESS_KEY;
 const secretAccessKey = process.env.S3_SECRET_KEY;
+
 
 if (!s3BucketName) {
     throw new Error('A variável de ambiente S3_BUCKET_NAME deve ser definida.');
@@ -89,7 +97,7 @@ const fileFilter = (req: MulterRequest, file: Express.Multer.File, cb: FileFilte
 
 export default {
     dest: path.resolve(__dirname, '..', '..', 'tmp', 'uploads'),
-    storage: storageTypes['s3'],
+    storage: storageTypes[storageType],
     limits: limits,
     fileFilter: fileFilter,
 };
