@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend bexams.com",
+  "description": "Backend LW-Upfiles.com",
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
